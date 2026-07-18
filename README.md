@@ -9,4 +9,4 @@
 - Body: 'Server is healthy'
 
 #### Postman 테스트 결과
-![Health Check API](images/health-check.png)
+![Health Check API](images/healthcheck.png)
