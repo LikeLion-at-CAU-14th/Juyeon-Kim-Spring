@@ -33,4 +33,30 @@ public class Orders extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "orders", cascade = CascadeType.ALL)
     private Coupon coupon;
+
+    @Embedded
+    private ShippingAddress shippingAddress;
+
+    public void updateShippingAddress(ShippingAddress shippingAddress) {
+        if (this.deliverStatus != DeliverStatus.PREPARATION) {
+            throw new IllegalStateException(
+                    "배송 준비 중인 주문만 배송정보를 수정할 수 있습니다."
+            );
+        }
+
+        this.shippingAddress = shippingAddress;
+    }
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    public void softDelete() {
+        if (this.deliverStatus != DeliverStatus.COMPLETED) {
+            throw new IllegalStateException(
+                    "배송 완료된 주문만 삭제할 수 있습니다."
+            );
+        }
+
+        this.deleted = true;
+    }
 }
