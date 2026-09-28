@@ -4,6 +4,7 @@ import com.example.likelion14th_springboot.domain.Member;
 import com.example.likelion14th_springboot.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,13 @@ public class MemberService {
     }
 
     public Page<Member> getMembersByPage(int page, int size) {
-        return memberRepository.findAll(PageRequest.of(page, size));
+        return memberRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+    }
+    public Page<Member> getMembersOver20(int page,int size){
+        PageRequest pageRequest = PageRequest.of(page,size, Sort.by("name").ascending());
+        return memberRepository.findByAgeGreaterThanEqual(20, pageRequest);
+    }
+    public List<Member> getByFirstName(String firstName) {
+        return memberRepository.findByNameStartingWith(firstName);
     }
 }

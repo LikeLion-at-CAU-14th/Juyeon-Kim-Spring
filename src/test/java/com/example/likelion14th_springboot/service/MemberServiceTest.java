@@ -45,6 +45,7 @@ public class MemberServiceTest {
                     .email("user" + i + "@test.com")
                     .address("서울시 테스트동 " + i + "번지")
                     .phoneNumber("010-1234-56" + String.format("%02d", i))
+                    .age(i)
                     .deposit(1000 * i)
                     .isAdmin(false)
                     .role(Role.BUYER)
@@ -91,5 +92,24 @@ public class MemberServiceTest {
         assertThat(page.getTotalElements()).isEqualTo(30);
         assertThat(page.getTotalPages()).isEqualTo(3);
         assertThat(page.getContent().get(0).getName()).isEqualTo("user30");
+    }
+    @Test
+    @DisplayName("나이가 20 이상이고 이름 기준 오름차순 정렬된 페이징 결과 반환된다.")
+    void testGetAdultMembersSortByName(){
+        Page<Member> page = memberService.getMembersOver20(0,10);
+
+        assertThat(page.getTotalElements()).isEqualTo(11);
+        assertThat(page.getContent()).hasSize(10);
+        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.getContent()).allMatch(member -> member.getAge() >= 20);
+        assertThat(page.getContent()).extracting(Member::getName).isSorted();
+    }
+    @Test
+    @DisplayName("이름이 주어진 값으로 시작하는 경우만 필터링한다")
+    void testGetMembersByName(){
+        List<Member> members = memberService.getByFirstName("user1");
+        assertThat(members).hasSize(11);
+        assertThat(members).allMatch(member -> member.getName().startsWith("user1"));
+
     }
 }
