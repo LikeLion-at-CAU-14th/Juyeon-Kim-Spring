@@ -35,7 +35,22 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductOrders> productOrders;
 
-    public void reduceStock(int amount){
+    public void reduceStock(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("주문 수량은 1개 이상이어야 합니다.");
+        }
+
+        if (this.stock == null || this.stock < amount) {
+            throw new IllegalArgumentException("상품 재고가 부족합니다.");
+        }
+
         this.stock -= amount;
+    }
+    // [추가] 상품의 정보를 안전하게 변경하는 비즈니스 메서드
+    public void update(String name, Integer price, Integer stock, String description){
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.description = description;
     }
 }
