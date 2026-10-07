@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.CorsConfig
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import com.example.likelion14th_springboot.service.CustomOAuth2UserService; // 추가
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService; // UserDetailsService DI. 의존성 주입
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     private static void corsAllow(CorsConfigurer<HttpSecurity> corsConfigurer) {
         corsConfigurer.configurationSource(request -> {
@@ -57,6 +59,26 @@ public class SecurityConfig {
         http
 
             .userDetailsService(customUserDetailsService)
+        ;
+        http
+                .cors((SecurityConfig::corsAllow))
+                .csrf(AbstractHttpConfigurer::disable) // 일반은 비활성화
+                .authorizeHttpRequests((auth) -> auth
+                        // --------------------- 여기부터 ------------------------
+                        .requestMatchers("/join", "/login",
+                                "/oauth2/**", "/login/oauth2/**",
+                                "/h2-console/**", "/error").permitAll()
+                        .anyRequest().authenticated())
+//                .requestMatchers("/**").authenticated()) // 인증된 사용자만 허용
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                )
+//            .formLogin(Customizer.withDefaults()) // login 설정
+//            .logout(Customizer.withDefaults()) // logout 설정
+                // ------------------- 여기까지 수정 ---------------------
+                .userDetailsService(customUserDetailsService)
         ;
 
         return http.build();
