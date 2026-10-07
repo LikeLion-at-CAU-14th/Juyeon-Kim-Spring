@@ -13,15 +13,15 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String address;
     private String email;
     private String phoneNumber;
     private Integer age;
+    private String password;
 
     @Builder
-    public Member(String name, String address, String email, String phoneNumber, Integer age, Role role, Boolean isAdmin, Integer deposit){
+    public Member(String name, String address, String email, String phoneNumber, Integer age,String password, Role role, Boolean isAdmin, Integer deposit){
         this.name = name;
         this.address = address;
         this.email = email;
@@ -30,6 +30,7 @@ public class Member {
         this.isAdmin = isAdmin;
         this.deposit = deposit;
         this.age = age;
+        this.password= password;
     }
 
     @Enumerated(EnumType.STRING)
