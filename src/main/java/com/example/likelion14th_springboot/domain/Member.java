@@ -21,15 +21,15 @@ public class Member {
     private String password;
 
     @Builder
-    public Member(String name, String address, String email, String phoneNumber, Integer age,String password, Role role, Boolean isAdmin, Integer deposit){
+    public Member(String name, String email, String password){
         this.name = name;
-        this.address = address;
+        //this.address = address;
         this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
-        this.isAdmin = isAdmin;
-        this.deposit = deposit;
-        this.age = age;
+        //this.phoneNumber = phoneNumber;
+        //this.role = role;
+        //this.isAdmin = isAdmin;
+        //this.deposit = deposit;
+        //this.age = age;
         this.password= password;
     }
 

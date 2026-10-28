@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    // 기존 코드가 이렇게 되어 있다면
     Member findByEmail(String email);
     Page<Member> findByAgeGreaterThanEqual(int age,Pageable pageable);
     List<Member> findByNameStartingWith(String name);
