@@ -7,6 +7,7 @@ import com.example.likelion14th_springboot.dto.response.ProductResponseDto;
 import com.example.likelion14th_springboot.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,5 +50,16 @@ public class ProductController{
                                                 @RequestBody ProductDeleteRequestDto dto){
         productService.deleteProduct(id, dto);
         return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<ProductResponseDto>> getMyProducts(
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+
+        return ResponseEntity.ok(
+                productService.getMyProducts(username)
+        );
     }
 }
