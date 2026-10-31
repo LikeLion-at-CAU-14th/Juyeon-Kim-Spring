@@ -95,4 +95,13 @@ public class ProductService{
         // 4. DB에서 상품 완전 삭제
         productRepository.delete(product);
     }
+
+    // 토큰으로 인증된 사용자가 판매자인 상품 목록 조회
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getMyProducts(String username) {
+        return productRepository.findAllBySeller_Name(username)
+                .stream()
+                .map(ProductResponseDto::fromEntity)
+                .toList();
+    }
 }
