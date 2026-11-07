@@ -25,7 +25,13 @@ public class MemberService {
     }
 
     public Member getByEmail(String email) {
-        return memberRepository.findByEmail(email);
+        Member member = memberRepository.findByEmail(email);
+
+        if (member == null) {
+            throw new IllegalArgumentException("해당 이메일의 회원이 없습니다.");
+        }
+
+        return member;
     }
 
     public Page<Member> getMembersByPage(int page, int size) {
