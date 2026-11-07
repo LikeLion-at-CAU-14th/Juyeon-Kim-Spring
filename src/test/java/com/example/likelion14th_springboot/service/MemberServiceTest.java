@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -43,13 +44,17 @@ public class MemberServiceTest {
             Member member = Member.builder()
                     .name("user" + i)
                     .email("user" + i + "@test.com")
-                    .address("서울시 테스트동 " + i + "번지")
-                    .phoneNumber("010-1234-56" + String.format("%02d", i))
-                    .age(i)
-                    .deposit(1000 * i)
-                    .isAdmin(false)
-                    .role(Role.BUYER)
+                    .password("test-password")
                     .build();
+
+            ReflectionTestUtils.setField(
+                    member, "address", "서울시 테스트동 " + i + "번지");
+            ReflectionTestUtils.setField(
+                    member, "phoneNumber", "010-1234-56" + String.format("%02d", i));
+            ReflectionTestUtils.setField(member, "age", i);
+            ReflectionTestUtils.setField(member, "deposit", 1000 * i);
+            ReflectionTestUtils.setField(member, "isAdmin", false);
+            ReflectionTestUtils.setField(member, "role", Role.BUYER);
 
             memberRepository.save(member);
         });
