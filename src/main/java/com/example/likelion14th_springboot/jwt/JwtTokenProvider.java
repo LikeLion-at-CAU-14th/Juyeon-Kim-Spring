@@ -5,8 +5,8 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -92,6 +92,11 @@ public class JwtTokenProvider {
     }
 
     private SecretKey getSigningKey() {
+        System.out.println("jwtSecret length: " + JWT_SECRET.length());
+        String jwtSecret = "";
+        System.out.println("jwtSecret starts with: " + jwtSecret.substring(0, Math.min(10, jwtSecret.length())));
+        System.out.println("Base64 valid: " +
+                jwtSecret.matches("[A-Za-z0-9+/]*={0,2}"));
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }

@@ -41,7 +41,11 @@ class ProductServiceTest {
     @DisplayName("판매자는 상품을 성공적으로 등록할 수 있다.")
     void createProduct_Success() {
         // given
-        Member seller = Member.builder().name("판매자").role(Role.SELLER).build();
+        Member seller = Member.builder()
+                .name("판매자")
+                .build();
+
+        ReflectionTestUtils.setField(seller, "role", Role.SELLER);
         ReflectionTestUtils.setField(seller, "id", 1L); // 안정성을 위해 ID 주입
 
         ProductCreateRequestDto requestDto = new ProductCreateRequestDto();
@@ -69,7 +73,11 @@ class ProductServiceTest {
     @DisplayName("판매자가 아닌 구매자가 상품을 등록하려 하면 예외가 발생한다.")
     void createProduct_Fail_NotSeller() {
         // given
-        Member buyer = Member.builder().name("구매자").role(Role.BUYER).build();
+        Member buyer = Member.builder()
+                .name("구매자")
+                .build();
+
+        ReflectionTestUtils.setField(buyer, "role", Role.BUYER);
         ReflectionTestUtils.setField(buyer, "id", 2L);
 
         ProductCreateRequestDto requestDto = new ProductCreateRequestDto();
@@ -121,7 +129,11 @@ class ProductServiceTest {
     @DisplayName("본인의 상품을 성공적으로 수정할 수 있다.")
     void updateProduct_Success() {
         // given
-        Member seller = Member.builder().name("판매자").role(Role.SELLER).build();
+        Member seller = Member.builder()
+                .name("판매자")
+                .build();
+
+        ReflectionTestUtils.setField(seller, "role", Role.SELLER);
         ReflectionTestUtils.setField(seller, "id", 1L); // NullPointerException 방지
 
         Product product = Product.builder().name("구상품").price(1000).stock(10).description("구설명").seller(seller).build();
@@ -149,7 +161,11 @@ class ProductServiceTest {
     @DisplayName("본인이 등록한 상품을 성공적으로 삭제할 수 있다.")
     void deleteProduct_Success() {
         // given
-        Member seller = Member.builder().name("판매자").role(Role.SELLER).build();
+        Member seller = Member.builder()
+                .name("판매자")
+                .build();
+
+        ReflectionTestUtils.setField(seller, "role", Role.SELLER);
         ReflectionTestUtils.setField(seller, "id", 1L); // NullPointerException 방지
 
         Product product = Product.builder().name("삭제할상품").price(1000).stock(10).description("설명").seller(seller)

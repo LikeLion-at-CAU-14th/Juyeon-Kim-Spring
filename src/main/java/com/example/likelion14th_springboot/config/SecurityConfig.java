@@ -1,11 +1,11 @@
 package com.example.likelion14th_springboot.config;
 
 import com.example.likelion14th_springboot.jwt.JwtAuthenticationFilter;
+import com.example.likelion14th_springboot.service.CustomOAuth2UserService;
 import com.example.likelion14th_springboot.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import com.example.likelion14th_springboot.service.CustomOAuth2UserService; // 추가
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,10 +24,13 @@ import java.util.Collections;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final CustomUserDetailsService customUserDetailsService; // UserDetailsService DI. 의존성 주입
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final JwtAuthenticationFilter jwtFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     private static void corsAllow(CorsConfigurer<HttpSecurity> corsConfigurer) {
         corsConfigurer.configurationSource(request -> {
@@ -42,7 +45,8 @@ public class SecurityConfig {
             return configuration;
         });
     }
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    private final CustomUserDetailsService customUserDetailsService; // UserDetailsService DI. 의존성 주입
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,24 +58,23 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) // http basic auth 기반 로그인 인증창 뜨지 않게
                 .formLogin(AbstractHttpConfigurer::disable) // 기본 로그인 페이지 없애기
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/join", "/login", "/oauth2/**", "/login/oauth2/**").permitAll() // 모두 허용
+                        .requestMatchers("/join", "/login", "/oauth2/**", "/login/oauth2/**", "/api/health").permitAll() // 모두 허용
                         .requestMatchers("/**").authenticated()) // 인증된 사용자만 허용
-                .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
-                        )
-                        .successHandler(oAuth2SuccessHandler)
-                )
+//                .oauth2Login(oauth -> oauth
+//                        .userInfoEndpoint(userInfo -> userInfo
+//                                .userService(customOAuth2UserService)
+//                        )
+//                )
 //            .formLogin(Customizer.withDefaults()) // login 설정
 //            .logout(Customizer.withDefaults()) // logout 설정
-                .userDetailsService(customUserDetailsService);
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 해당 필터 전에 jwtFilter가 걸리도록
+                .userDetailsService(customUserDetailsService)
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
+
 }

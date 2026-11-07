@@ -1,6 +1,5 @@
 package com.example.likelion14th_springboot.controller;
 
-import com.example.likelion14th_springboot.config.PrincipalHandler;
 import com.example.likelion14th_springboot.domain.Member;
 import com.example.likelion14th_springboot.dto.request.JoinRequestDto;
 import com.example.likelion14th_springboot.dto.response.TokenResponseDto;
@@ -44,12 +43,6 @@ public class JoinController {
     public TokenResponseDto login(@RequestBody JoinRequestDto joinRequestDto) {
         Member member = memberService.login(joinRequestDto);
         return TokenResponseDto.of(jwtTokenProvider.generateAccessToken(member.getName()), jwtTokenProvider.generateRefreshToken(member.getName()));
-    }
-
-    @GetMapping("/my")
-    public ResponseEntity<String> getMyName() {
-        String name = PrincipalHandler.getUsernameFromPrincipal();
-        return ResponseEntity.ok(name);
     }
 
 }

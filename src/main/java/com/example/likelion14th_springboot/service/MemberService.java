@@ -25,7 +25,13 @@ public class MemberService {
     }
 
     public Member getByEmail(String email) {
-        return memberRepository.findByEmail(email);
+        Member member = memberRepository.findByEmail(email);
+
+        if (member == null) {
+            throw new IllegalArgumentException("해당 이메일의 회원이 없습니다.");
+        }
+
+        return member;
     }
 
     public Page<Member> getMembersByPage(int page, int size) {
@@ -54,6 +60,7 @@ public class MemberService {
         // 유저 정보 저장
         memberRepository.save(member);
     }
+
     public Member login(JoinRequestDto joinRequestDto) {
         Member member = memberRepository.findByName(joinRequestDto.getName())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
